@@ -1,0 +1,15 @@
+release/main.o
+release/mainwindow.o
+release/gamescene.o
+release/startscene.o
+release/tank.o
+release/playertank.o
+release/enemytank.o
+release/bullet.o
+release/wall.o
+release/base.o
+release/gamemanager.o
+release/moc_mainwindow.o
+release/moc_gamescene.o
+release/moc_startscene.o
+release/moc_gamemanager.o

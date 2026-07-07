@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(echo \"=== Qt tools in share ===\"; Get-ChildItem \"C:\\\\msys64\\\\ucrt64\\\\share\\\\qt6\\\\bin\" -Name; echo \"=== run qmake ===\"; Set-Location \"F:\\\\VSProject\\\\C++\\\\3rdProject\"; $env:PATH = \"C:\\\\msys64\\\\ucrt64\\\\bin;C:\\\\msys64\\\\ucrt64\\\\share\\\\qt6\\\\bin;$env:PATH\"; & \"C:\\\\msys64\\\\ucrt64\\\\bin\\\\qmake6.exe\" \"TankBattle.pro\" -spec win32-g++ \"CONFIG+=debug\" \"CONFIG+=qml_debug\" 2>&1)",
+      "PowerShell($env:PATH = \"C:\\\\msys64\\\\ucrt64\\\\bin;C:\\\\msys64\\\\ucrt64\\\\share\\\\qt6\\\\bin;$env:PATH\"; Set-Location \"F:\\\\VSProject\\\\C++\\\\3rdProject\"; & \"C:\\\\msys64\\\\ucrt64\\\\bin\\\\mingw32-make.exe\" 2>&1)",
+      "PowerShell($env:PATH = \"C:\\\\msys64\\\\ucrt64\\\\bin;C:\\\\msys64\\\\ucrt64\\\\share\\\\qt6\\\\bin;$env:PATH\"; Set-Location \"F:\\\\VSProject\\\\C++\\\\3rdProject\"; & \"C:\\\\msys64\\\\ucrt64\\\\bin\\\\mingw32-make.exe\" clean 2>&1; echo \"===== MAKING =====\"; & \"C:\\\\msys64\\\\ucrt64\\\\bin\\\\mingw32-make.exe\" 2>&1)",
+      "PowerShell($env:PATH = \"C:\\\\msys64\\\\ucrt64\\\\bin;C:\\\\msys64\\\\ucrt64\\\\share\\\\qt6\\\\bin;$env:PATH\"; Start-Process \"F:\\\\VSProject\\\\C++\\\\3rdProject\\\\debug\\\\TankBattle.exe\" -PassThru | Select-Object Id, ProcessName; Start-Sleep -Seconds 3; echo \"Process started. Check if it's still running...\"; $proc = Get-Process -Id \\(Get-Process TankBattle -ErrorAction SilentlyContinue\\).Id -ErrorAction SilentlyContinue; if \\($proc\\) { echo \"TankBattle is running \\(PID: $\\($proc.Id\\)\\)\"; Stop-Process $proc -Force; echo \"Stopped.\" } else { echo \"TankBattle exited already.\" })",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(Get-Process *)",
+      "Bash(qmake TankBattle.pro)",
+      "Bash(make clean *)",
+      "Bash(make)",
+      "Bash(where qmake *)",
+      "Bash(where mingw32-make *)",
+      "Bash(where nmake *)",
+      "Bash(mingw32-make clean *)",
+      "Bash(mingw32-make)",
+      "Bash(C:/msys64/ucrt64/bin/mingw32-make.exe -f Makefile.Debug)",
+      "Bash(start \"\" ./debug/TankBattle.exe)",
+      "Bash(C:/msys64/ucrt64/bin/mingw32-make.exe)",
+      "Bash(C:/msys64/ucrt64/bin/qmake6.exe TankBattle.pro -spec win32-g++ \"CONFIG+=debug\" \"CONFIG+=qml_debug\")"
+    ]
+  }
+}
