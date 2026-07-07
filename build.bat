@@ -1,81 +1,96 @@
 @echo off
-chcp 65001 >nul
+setlocal EnableDelayedExpansion
+
 echo ============================================
-echo   坦克大战 - 一键编译脚本
+echo   TankBattle - One-Click Build Script
 echo ============================================
 echo.
 
-:: 设置Qt SDK路径
+:: Set Qt SDK path (relative to project root)
 set "QT_DIR=%~dp0qt-sdk"
 set "PATH=%QT_DIR%\bin;%PATH%"
 
-:: 检查编译器
+:: Auto-detect MSYS2 MinGW compiler
+for %%d in (C:\msys64 D:\msys64 E:\msys64) do (
+    if exist "%%d\ucrt64\bin\g++.exe" (
+        set "PATH=%%d\ucrt64\bin;%%d\usr\bin;!PATH!"
+        echo [INFO] Found MSYS2 at %%d
+    )
+)
+:: Fallback: try mingw64
 where g++ >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-    echo [错误] 未找到 g++ 编译器!
-    echo 请确保 MinGW-w64 (ucrt64) 已安装并添加到 PATH 环境变量中.
+    for %%d in (C:\msys64 D:\msys64 E:\msys64) do (
+        if exist "%%d\mingw64\bin\g++.exe" (
+            set "PATH=%%d\mingw64\bin;%%d\usr\bin;!PATH!"
+            echo [INFO] Found MSYS2 at %%d ^(mingw64^)
+        )
+    )
+)
+
+:: Check compiler
+where g++ >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo [ERROR] g++ compiler not found!
     echo.
-    echo 推荐安装方式:
-    echo   1. MSYS2: https://www.msys2.org/
-    echo      pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-make
-    echo   2. 或 winlibs: https://winlibs.com/
+    echo Please install MSYS2: https://www.msys2.org/
+    echo Then run: pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-make
     echo.
     pause
     exit /b 1
 )
 
+:: Check make tool
 where mingw32-make >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-    echo [提示] 未找到 mingw32-make, 尝试使用 make...
-    set "MAKE=make"
     where make >nul 2>&1
     if %ERRORLEVEL% neq 0 (
-        echo [错误] 未找到 make 工具!
+        echo [ERROR] make tool not found!
         pause
         exit /b 1
     )
+    set "MAKE=make"
 ) else (
     set "MAKE=mingw32-make"
 )
 
-echo [信息] Qt SDK: %QT_DIR%
-echo [信息] 编译器:
-g++ --version | findstr /C:"g++"
+echo [INFO] Qt SDK: %QT_DIR%
+g++.exe --version 2>&1 | findstr /C:"g++"
 echo.
 
-:: 清理旧的编译产物
-echo [1/3] 清理旧构建...
-if exist Makefile del /q Makefile
-if exist Makefile.Debug del /q Makefile.Debug
-if exist Makefile.Release del /q Makefile.Release
-if exist debug rmdir /s /q debug
-if exist release rmdir /s /q release
+:: Clean old build
+echo [1/3] Cleaning old build...
+if exist Makefile del /q Makefile 2>nul
+if exist Makefile.Debug del /q Makefile.Debug 2>nul
+if exist Makefile.Release del /q Makefile.Release 2>nul
+if exist debug rmdir /s /q debug 2>nul
+if exist release rmdir /s /q release 2>nul
 
-:: 运行 qmake
-echo [2/3] 运行 qmake ...
+:: Run qmake
+echo [2/3] Running qmake...
 qmake TankBattle.pro
 if %ERRORLEVEL% neq 0 (
-    echo [错误] qmake 失败!
+    echo [ERROR] qmake failed!
     pause
     exit /b 1
 )
 
-:: 编译 Release 版本
-echo [3/3] 编译 Release 版本 ...
-%MAKE% -f Makefile.Release
+:: Compile Release
+echo [3/3] Compiling Release build...
+!MAKE! -f Makefile.Release
 if %ERRORLEVEL% neq 0 (
-    echo [错误] 编译失败!
+    echo [ERROR] Build failed!
     pause
     exit /b 1
 )
 
 echo.
 echo ============================================
-echo   编译成功!
-echo   输出: release\TankBattle.exe
+echo   Build SUCCESS!
+echo   Output: release\TankBattle.exe
 echo ============================================
 echo.
-echo 复制运行时DLL到输出目录...
+echo Copying runtime DLLs to output...
 if not exist release mkdir release
 xcopy /Y /Q "%~dp0deploy\*.dll" "release\" >nul 2>&1
 xcopy /Y /Q /E "%~dp0deploy\platforms" "release\platforms\" >nul 2>&1
@@ -86,6 +101,7 @@ xcopy /Y /Q /E "%~dp0deploy\generic" "release\generic\" >nul 2>&1
 xcopy /Y /Q /E "%~dp0deploy\networkinformation" "release\networkinformation\" >nul 2>&1
 copy /Y "%~dp0deploy\qt.conf" "release\" >nul 2>&1
 
-echo.
-echo 运行游戏...
+echo Launching game...
 start "" "release\TankBattle.exe"
+
+endlocal
