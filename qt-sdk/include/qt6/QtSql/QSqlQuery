@@ -1,1 +1,0 @@
-#include <QtSql/qsqlquery.h> // IWYU pragma: export

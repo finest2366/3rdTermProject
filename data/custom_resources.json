@@ -1,0 +1,24 @@
+{
+  "_comment": "=== 素材替换配置文件 ===",
+  "_usage": "将右侧路径改为你的图片路径即可替换游戏素材。路径相对于游戏运行目录。",
+  "_supported_keys": [
+    "tank_player1", "tank_player2",
+    "enemy_basic", "enemy_fast", "enemy_heavy", "enemy_boss",
+    "wall_brick", "wall_steel", "wall_water",
+    "bullet_player", "bullet_enemy",
+    "base",
+    "powerup_Speed Boost", "powerup_Shield", "powerup_Rapid Fire",
+    "powerup_Heal", "powerup_Bomb", "powerup_Freeze", "powerup_Invisible",
+    "skill_Sprint", "skill_Missile", "skill_Shield Wall",
+    "background"
+  ],
+  "_example": {
+    "tank_player1": "./my_skins/tank_red.png",
+    "tank_player2": "./my_skins/tank_blue.png",
+    "enemy_basic": "./my_skins/enemy_basic.png",
+    "enemy_boss": "./my_skins/boss_dragon.png",
+    "wall_brick": "./my_skins/brick_gold.png",
+    "wall_steel": "./my_skins/steel_dark.png",
+    "base": "./my_skins/hq_flag.png"
+  }
+}

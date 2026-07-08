@@ -1,0 +1,36 @@
+{
+  "levelId": 4,
+  "name": "重装围攻",
+  "description": "大量重装敌人从两侧包抄！善用冰冻和炸弹道具。",
+  "map": [
+    "BBBBBBBBBBBBBBB",
+    "B  S  B  S  B B",
+    "B     B       B",
+    "B  S  B  S  B B",
+    "B     B       B",
+    "B           S B",
+    "B    BBB      B",
+    "B           S B",
+    "B     B       B",
+    "B  S  B  S  B B",
+    "B     B       B",
+    "B  S  B  S  B B",
+    "B             B",
+    "B      P      B",
+    "BBBBBBBBBBBBBBB"
+  ],
+  "playerSpawn": { "x": 7, "y": 13 },
+  "basePosition": { "x": 7, "y": 13 },
+  "enemies": [
+    { "type": "heavy", "spawn": { "x": 1, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "heavy", "spawn": { "x": 13, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "fast", "spawn": { "x": 7, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "heavy", "spawn": { "x": 3, "y": 3 }, "ai": "AggressiveAI" },
+    { "type": "heavy", "spawn": { "x": 11, "y": 3 }, "ai": "AggressiveAI" },
+    { "type": "basic", "spawn": { "x": 1, "y": 9 }, "ai": "PatrolAI" },
+    { "type": "basic", "spawn": { "x": 13, "y": 9 }, "ai": "PatrolAI" },
+    { "type": "heavy", "spawn": { "x": 5, "y": 5 }, "ai": "PatrolAI" },
+    { "type": "heavy", "spawn": { "x": 9, "y": 5 }, "ai": "PatrolAI" }
+  ],
+  "powerups": ["BombPowerUp", "FreezePowerUp", "ShieldPowerUp", "HealPowerUp", "InvisiblePowerUp"]
+}

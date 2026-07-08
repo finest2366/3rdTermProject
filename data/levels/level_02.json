@@ -1,0 +1,34 @@
+{
+  "levelId": 2,
+  "name": "钢铁防线",
+  "description": "更多钢铁墙阻挡你的子弹，需要迂回作战！",
+  "map": [
+    "BBBBBBBBBBBBBBB",
+    "B  S  S  S  S B",
+    "B B B B B B B B",
+    "B  S  S  S  S B",
+    "B   B   B   B B",
+    "B             B",
+    "B  SSS   SSS  B",
+    "B             B",
+    "B B   B   B   B",
+    "B  S  S  S  S B",
+    "B B B B B B B B",
+    "B  S  S  S  S B",
+    "B             B",
+    "B      P      B",
+    "BBBBBBBBBBBBBBB"
+  ],
+  "playerSpawn": { "x": 7, "y": 13 },
+  "basePosition": { "x": 7, "y": 13 },
+  "enemies": [
+    { "type": "basic", "spawn": { "x": 1, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "fast", "spawn": { "x": 3, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "basic", "spawn": { "x": 7, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "fast", "spawn": { "x": 11, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "heavy", "spawn": { "x": 13, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "basic", "spawn": { "x": 1, "y": 7 }, "ai": "AggressiveAI" },
+    { "type": "heavy", "spawn": { "x": 13, "y": 7 }, "ai": "PatrolAI" }
+  ],
+  "powerups": ["SpeedBoost", "ShieldPowerUp", "HealPowerUp", "BombPowerUp"]
+}

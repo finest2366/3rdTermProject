@@ -1,0 +1,32 @@
+{
+  "levelId": 1,
+  "name": "初次遭遇",
+  "description": "消灭所有敌方坦克！使用道具获得优势。",
+  "map": [
+    "BBBBBBBBBBBBBBB",
+    "B   S   S     B",
+    "B B B B B B B B",
+    "B   S   S     B",
+    "B  B       B  B",
+    "B             B",
+    "B     B       B",
+    "B             B",
+    "B  B       B  B",
+    "B   S   S     B",
+    "B B B B B B B B",
+    "B   S   S     B",
+    "B             B",
+    "B      P      B",
+    "BBBBBBBBBBBBBBB"
+  ],
+  "playerSpawn": { "x": 7, "y": 13 },
+  "basePosition": { "x": 7, "y": 13 },
+  "enemies": [
+    { "type": "basic", "spawn": { "x": 1, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "basic", "spawn": { "x": 7, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "basic", "spawn": { "x": 13, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "fast", "spawn": { "x": 1, "y": 7 }, "ai": "AggressiveAI" },
+    { "type": "heavy", "spawn": { "x": 13, "y": 7 }, "ai": "PatrolAI" }
+  ],
+  "powerups": ["SpeedBoost", "ShieldPowerUp", "RapidFirePowerUp"]
+}

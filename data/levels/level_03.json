@@ -1,0 +1,34 @@
+{
+  "levelId": 3,
+  "name": "水域迷踪",
+  "description": "水域阻挡坦克移动但子弹可以飞过！小心快速敌人的突袭。",
+  "map": [
+    "BBBBBBBBBBBBBBB",
+    "B      W      B",
+    "B B B W B B B B",
+    "B      W      B",
+    "B  B  W  B  B B",
+    "B      W      B",
+    "B  WWWWWWWWW  B",
+    "B      W      B",
+    "B  B  W  B  B B",
+    "B      W      B",
+    "B B B W B B B B",
+    "B      W      B",
+    "B  S   W   S  B",
+    "B      P      B",
+    "BBBBBBBBBBBBBBB"
+  ],
+  "playerSpawn": { "x": 7, "y": 13 },
+  "basePosition": { "x": 7, "y": 13 },
+  "enemies": [
+    { "type": "fast", "spawn": { "x": 1, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "fast", "spawn": { "x": 13, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "basic", "spawn": { "x": 3, "y": 5 }, "ai": "PatrolAI" },
+    { "type": "basic", "spawn": { "x": 11, "y": 5 }, "ai": "PatrolAI" },
+    { "type": "heavy", "spawn": { "x": 7, "y": 1 }, "ai": "PatrolAI" },
+    { "type": "fast", "spawn": { "x": 1, "y": 9 }, "ai": "AggressiveAI" },
+    { "type": "fast", "spawn": { "x": 13, "y": 9 }, "ai": "AggressiveAI" }
+  ],
+  "powerups": ["SpeedBoost", "RapidFirePowerUp", "FreezePowerUp", "HealPowerUp"]
+}

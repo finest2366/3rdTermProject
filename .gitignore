@@ -1,17 +1,42 @@
-# Build artifacts
-debug/
-release/
+# 构建产物
+out/
+build/
 *.o
+*.obj
 *.exe
+*.dll
+*.so
+*.dylib
+moc_*
+ui_*
+qrc_*
+*.moc
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
 Makefile
-Makefile.Debug
-Makefile.Release
-.qmake.stash
 
-# Whitelist: deploy folder (pre-built executable with runtime DLLs)
-!deploy/
-!deploy/**
+# Qt 自动生成
+*_autogen/
 
-# Whitelist: qt-sdk folder (portable Qt SDK for compilation)
-!qt-sdk/
-!qt-sdk/**
+# IDE
+.vs/
+.vscode/
+*.user
+*.pro.user*
+.idea/
+
+# 操作系统
+Thumbs.db
+.DS_Store
+
+# 数据库
+*.db
+*.db-shm
+*.db-wal
+
+# vcpkg
+vcpkg_installed/

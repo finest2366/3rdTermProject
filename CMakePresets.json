@@ -1,0 +1,67 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "Qt-MinGW-NoVcpkg",
+            "displayName": "Qt MinGW — 纯 Qt (无 vcpkg)",
+            "description": "使用 Qt 自带 CMake+MinGW，不需要 vcpkg。直接双击 build_and_run.bat 或运行：cmake --preset Qt-MinGW-NoVcpkg && cmake --build out/build/Qt-MinGW-NoVcpkg",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "generator": "MinGW Makefiles",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+                "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
+                "CMAKE_PREFIX_PATH": "C:/Qt/6.11.1/mingw_64",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTS": "OFF"
+            },
+            "environment": {
+                "PATH": "C:/Qt/Tools/CMake_64/bin;C:/Qt/Tools/mingw1310_64/bin;C:/Qt/6.11.1/mingw_64/bin;$penv{PATH}"
+            }
+        },
+        {
+            "name": "Qt-MinGW-Debug",
+            "displayName": "Qt MinGW 13.1.0 (Debug)",
+            "description": "编译器: Qt MinGW 13.1.0, Qt6: C:/Qt/6.11.1/mingw_64, vcpkg triplet: x64-qt6-mingw-dynamic",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "generator": "MinGW Makefiles",
+            "toolchainFile": "C:/Users/13764/Desktop/termtask1/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+                "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
+                "CMAKE_PREFIX_PATH": "C:/Qt/6.11.1/mingw_64",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "VCPKG_TARGET_TRIPLET": "x64-qt6-mingw-dynamic",
+                "VCPKG_HOST_TRIPLET": "x64-qt6-mingw-dynamic",
+                "BUILD_TESTS": "ON"
+            },
+            "environment": {
+                "VCPKG_ROOT": "C:\\Users\\13764\\Desktop\\termtask1\\vcpkg"
+            }
+        },
+        {
+            "name": "Qt-MinGW-Release",
+            "displayName": "Qt MinGW 13.1.0 (Release)",
+            "description": "Release 构建配置",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "generator": "MinGW Makefiles",
+            "toolchainFile": "C:/Users/13764/Desktop/termtask1/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+                "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
+                "CMAKE_PREFIX_PATH": "C:/Qt/6.11.1/mingw_64",
+                "CMAKE_BUILD_TYPE": "Release",
+                "VCPKG_TARGET_TRIPLET": "x64-qt6-mingw-dynamic",
+                "VCPKG_HOST_TRIPLET": "x64-qt6-mingw-dynamic",
+                "BUILD_TESTS": "OFF"
+            },
+            "environment": {
+                "VCPKG_ROOT": "C:\\Users\\13764\\Desktop\\termtask1\\vcpkg"
+            }
+        }
+    ]
+}

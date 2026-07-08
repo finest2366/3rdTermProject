@@ -1,0 +1,35 @@
+{
+  "levelId": 5,
+  "name": "Boss决战",
+  "description": "最终关卡！击败BOSS坦克及其护卫队。BOSS拥有6点生命值且会连射！",
+  "map": [
+    "BBBBBBBBBBBBBBB",
+    "B   S   S   S B",
+    "B B   B   B   B",
+    "B   S   S   S B",
+    "B  B       B  B",
+    "B     WWW     B",
+    "B  S  WWW  S  B",
+    "B     WWW     B",
+    "B  B       B  B",
+    "B   S   S   S B",
+    "B B   B   B   B",
+    "B   S   S   S B",
+    "B             B",
+    "B      P      B",
+    "BBBBBBBBBBBBBBB"
+  ],
+  "playerSpawn": { "x": 7, "y": 13 },
+  "basePosition": { "x": 7, "y": 13 },
+  "enemies": [
+    { "type": "boss", "spawn": { "x": 7, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "fast", "spawn": { "x": 1, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "fast", "spawn": { "x": 13, "y": 1 }, "ai": "AggressiveAI" },
+    { "type": "heavy", "spawn": { "x": 1, "y": 5 }, "ai": "PatrolAI" },
+    { "type": "heavy", "spawn": { "x": 13, "y": 5 }, "ai": "PatrolAI" },
+    { "type": "basic", "spawn": { "x": 3, "y": 3 }, "ai": "PatrolAI" },
+    { "type": "basic", "spawn": { "x": 11, "y": 3 }, "ai": "PatrolAI" }
+  ],
+  "powerups": ["BombPowerUp", "FreezePowerUp", "ShieldPowerUp", "InvisiblePowerUp",
+                "SpeedBoost", "RapidFirePowerUp", "HealPowerUp"]
+}
