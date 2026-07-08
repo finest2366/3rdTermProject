@@ -16,7 +16,7 @@
 #pragma once
 
 #include "../core/game_common.h"
-#include <QVector>
+#include <vector>
 #include <memory>
 #include <functional>
 
@@ -51,7 +51,7 @@ public:
     AIAction decide(EnemyTank* tank, const GameState& state);
 
 protected:
-    QVector<std::unique_ptr<DecisionNode>> m_children;
+    std::vector<std::unique_ptr<DecisionNode>> m_children;
 };
 
 /**

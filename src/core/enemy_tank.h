@@ -13,7 +13,7 @@ class AIController;
 class EnemyTank : public Tank {
 public:
     EnemyTank(TankType enemyType, const QPointF& pos, std::unique_ptr<AIController> ai);
-    ~EnemyTank() override = default;
+    ~EnemyTank() override;
 
     Bullet* fire() override;
     void updateAI(const GameState& state) override;

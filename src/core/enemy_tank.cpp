@@ -49,6 +49,8 @@ EnemyTank::EnemyTank(TankType enemyType, const QPointF& pos, std::unique_ptr<AIC
     }
 }
 
+EnemyTank::~EnemyTank() = default;
+
 Bullet* EnemyTank::fire() {
     if (!canFire()) return nullptr;
 

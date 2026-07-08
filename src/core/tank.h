@@ -23,7 +23,7 @@ class Tank {
 public:
     Tank(TankType type, const QString& name, const QPointF& pos, Direction dir,
          int hp, double speed, int fireCooldownMs);
-    virtual ~Tank() = default;
+    virtual ~Tank();
 
     // ---- 纯虚函数 ----
     /** @brief 开火，生成一颗子弹。若冷却中返回 nullptr */

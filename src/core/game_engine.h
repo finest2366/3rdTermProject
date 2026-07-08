@@ -44,7 +44,7 @@ public:
     void startMultiGame();
 
     // ---- 每帧更新 ----
-    void update();
+    void update(int deltaMs);
 
     // ---- 玩家输入 ----
     void handleInput(int playerIndex, int direction, bool fire);
@@ -78,6 +78,9 @@ public:
     /** @brief 渲染脏标记（供 UI 层判断是否需要重绘） */
     bool isDirty() const { return m_dirty; }
     void clearDirty() { m_dirty = false; }
+
+    /** @brief 获取自游戏开始以来的累计帧时间（毫秒），用于动画效果 */
+    int lastFrameMs() const { return m_lastFrameMs; }
 
 signals:
     void gameOver(int winner);      // 0=失败, 1=P1胜, 2=P2胜

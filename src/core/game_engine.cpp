@@ -16,6 +16,7 @@
 #include "powerup.h"
 #include "skill.h"
 #include "map.h"
+#include <QRectF>
 #include "ai/ai_controller.h"
 #include "utils/factory.h"
 #include "data/level_loader.h"
@@ -356,14 +357,13 @@ bool GameEngine::activateSkill(int playerIndex) {
 // ============================================================
 // 主更新循环
 // ============================================================
-void GameEngine::update() {
+void GameEngine::update(int deltaMs) {
     if (m_gameOver) return;
 
-    int frameDelta = 16;  // 约 60 FPS
-    m_lastFrameMs += frameDelta;
+    m_lastFrameMs += deltaMs;
 
     updateEnemyAI();
-    updateTimedEffects(frameDelta);
+    updateTimedEffects(deltaMs);
     updateBullets();
     checkCollisions();
     removeDeadEntities();

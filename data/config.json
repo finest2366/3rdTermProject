@@ -1,6 +1,6 @@
 {
-  "musicVolume": 80,
-  "sfxVolume": 100,
-  "fullscreen": false,
-  "customResourcePath": ""
+    "customResourcePath": "",
+    "fullscreen": false,
+    "musicVolume": 80,
+    "sfxVolume": 100
 }

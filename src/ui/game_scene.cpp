@@ -1,9 +1,9 @@
 /**
  * @file game_scene.cpp
- * @brief 游戏场景渲染实现
+ * @brief 游戏场景渲染实现 —— QPainter 直接绘制
  *
- * 渲染顺序：背景 → 墙壁 → 道具 → 坦克 → 子弹 → 基地
- * v2.0 新增：水域/冰冻/隐身/Boss特效渲染
+ * 渲染顺序：墙壁 → 道具 → 坦克 → 子弹 → 基地
+ * v2.1：从 QGraphicsItem 重构为 QPainter，零每帧分配
  */
 
 #include "game_scene.h"
@@ -15,88 +15,74 @@
 #include "../core/powerup.h"
 #include "../core/game_common.h"
 
-#include <QGraphicsRectItem>
-#include <QGraphicsLineItem>
-#include <QGraphicsEllipseItem>
-#include <QGraphicsSimpleTextItem>
-#include <QPen>
-#include <QBrush>
+#include <QPainter>
 #include <QFont>
 
 GameScene::GameScene(QObject* parent)
-    : QGraphicsScene(parent)
+    : QObject(parent)
 {
-    setBackgroundBrush(QBrush(QColor(20, 20, 30)));  // 深蓝灰背景
 }
 
 GameScene::~GameScene() = default;
 
-void GameScene::syncWithEngine() {
-    if (!m_engine) return;
+void GameScene::render(QPainter& painter, GameEngine* engine) {
+    if (!engine) return;
 
-    // 清除上一帧
-    clearAllItems();
+    drawWalls(painter, engine);
+    drawPowerUps(painter, engine);
+    drawTanks(painter, engine);
+    drawBullets(painter, engine);
+    drawBases(painter, engine);
+}
 
-    // ===== 1. 墙壁 =====
-    for (const auto& wall : m_engine->walls()) {
+void GameScene::drawWalls(QPainter& painter, GameEngine* engine) {
+    for (const auto& wall : engine->walls()) {
         if (!wall->isActive()) continue;
 
         QColor fillColor;
         switch (wall->wallType()) {
-        case WallType::Brick:
-            fillColor = QColor(139, 90, 43);   // 棕色砖墙
-            break;
-        case WallType::Steel:
-            fillColor = QColor(128, 128, 128);  // 灰色钢铁
-            break;
-        case WallType::Water:
-            fillColor = QColor(30, 100, 200);   // 蓝色水域
-            break;
+        case WallType::Brick: fillColor = QColor(139, 90, 43); break;
+        case WallType::Steel: fillColor = QColor(128, 128, 128); break;
+        case WallType::Water: fillColor = QColor(30, 100, 200); break;
         }
 
-        auto* item = addRect(
-            wall->position().x(), wall->position().y(),
-            wall->size().width(), wall->size().height(),
-            QPen(Qt::black, 1),
-            QBrush(fillColor)
-        );
-        m_dynamicItems.append(item);
+        painter.setPen(QPen(Qt::black, 1));
+        painter.setBrush(QBrush(fillColor));
+        painter.drawRect(QRectF(wall->position(), wall->size()));
 
-        // 水域加波纹效果（水平线）
+        // 水域波纹效果
         if (wall->wallType() == WallType::Water) {
             double y = wall->position().y() + wall->size().height() / 2;
-            auto* waveLine = addLine(
-                wall->position().x() + 2, y,
-                wall->position().x() + wall->size().width() - 2, y,
-                QPen(QColor(100, 180, 255, 100), 1)
-            );
-            m_dynamicItems.append(waveLine);
+            painter.setPen(QPen(QColor(100, 180, 255, 100), 1));
+            painter.drawLine(
+                QPointF(wall->position().x() + 2, y),
+                QPointF(wall->position().x() + wall->size().width() - 2, y));
         }
     }
+}
 
-    // ===== 2. 道具 =====
-    for (const auto& pu : m_engine->powerUps()) {
+void GameScene::drawPowerUps(QPainter& painter, GameEngine* engine) {
+    for (const auto& pu : engine->powerUps()) {
         if (!pu->isActive()) continue;
 
         QColor puColor = colorForPowerUp(static_cast<int>(pu->powerUpType()));
 
-        auto* rectItem = addRect(
-            pu->position().x(), pu->position().y(),
-            pu->size().width(), pu->size().height(),
-            QPen(Qt::white, 1),
-            QBrush(puColor)
-        );
-        m_dynamicItems.append(rectItem);
+        painter.setPen(QPen(Qt::white, 1));
+        painter.setBrush(QBrush(puColor));
+        painter.drawRect(QRectF(pu->position(), pu->size()));
 
         // 道具首字母标签
-        auto* textItem = addSimpleText(pu->name().left(1), QFont("Arial", 10, QFont::Bold));
-        textItem->setPos(pu->position().x() + 8, pu->position().y() + 4);
-        textItem->setBrush(Qt::white);
-        m_dynamicItems.append(textItem);
+        painter.setPen(Qt::white);
+        painter.setFont(QFont("Arial", 10, QFont::Bold));
+        painter.drawText(
+            QRectF(pu->position().x() + 2, pu->position().y() + 2,
+                   pu->size().width(), pu->size().height()),
+            Qt::AlignCenter, pu->name().left(1));
     }
+}
 
-    // ===== 3. 坦克 =====
-    for (const auto& tank : m_engine->tanks()) {
+void GameScene::drawTanks(QPainter& painter, GameEngine* engine) {
+    for (const auto& tank : engine->tanks()) {
         if (!tank->isAlive()) continue;
 
         // 隐身特效：半透明
@@ -109,17 +95,13 @@ void GameScene::syncWithEngine() {
             color = QColor(100, 150, 255);
         }
 
-        // Boss 更大
         double size = tank->sizeValue();
 
         // 坦克主体
-        auto* bodyItem = addRect(
-            tank->position().x(), tank->position().y(),
-            size, size,
-            QPen(tank->isFrozen() ? QColor(0, 200, 255) : Qt::white, tank->type() == TankType::EnemyBoss ? 3 : 2),
-            QBrush(color)
-        );
-        m_dynamicItems.append(bodyItem);
+        painter.setPen(QPen(tank->isFrozen() ? QColor(0, 200, 255) : Qt::white,
+                            tank->type() == TankType::EnemyBoss ? 3 : 2));
+        painter.setBrush(QBrush(color));
+        painter.drawRect(QRectF(tank->position(), QSizeF(size, size)));
 
         // 血条
         {
@@ -129,19 +111,18 @@ void GameScene::syncWithEngine() {
             double barY = tank->position().y() - barHeight - 2.0;
 
             // 背景
-            auto* barBg = addRect(barX, barY, barWidth, barHeight,
-                                  QPen(Qt::NoPen), QBrush(QColor(40, 40, 40)));
-            m_dynamicItems.append(barBg);
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(QBrush(QColor(40, 40, 40)));
+            painter.drawRect(QRectF(barX, barY, barWidth, barHeight));
 
             // 前景
             double hpRatio = static_cast<double>(tank->hp()) / tank->maxHp();
             QColor hpColor = (hpRatio > 0.5) ? QColor(0, 255, 0)
                            : (hpRatio > 0.25) ? QColor(255, 255, 0)
                            : QColor(255, 0, 0);
-            auto* barFg = addRect(barX + 1, barY + 1,
-                                  (barWidth - 2) * hpRatio, barHeight - 2,
-                                  QPen(Qt::NoPen), QBrush(hpColor));
-            m_dynamicItems.append(barFg);
+            painter.setBrush(QBrush(hpColor));
+            painter.drawRect(QRectF(barX + 1, barY + 1,
+                                    (barWidth - 2) * hpRatio, barHeight - 2));
         }
 
         // 炮管
@@ -157,74 +138,59 @@ void GameScene::syncWithEngine() {
         case Direction::Right: bx += barrelLen; break;
         }
 
-        QPen barrelPen(Qt::white, tank->type() == TankType::EnemyBoss ? 4 : 3);
-        auto* barrelItem = addLine(cx, cy, bx, by, barrelPen);
-        m_dynamicItems.append(barrelItem);
+        painter.setPen(QPen(Qt::white, tank->type() == TankType::EnemyBoss ? 4 : 3));
+        painter.drawLine(QPointF(cx, cy), QPointF(bx, by));
 
         // 护盾效果
         if (tank->hasShield()) {
-            auto* shieldItem = addEllipse(
+            painter.setPen(QPen(QColor(0, 180, 255, 200), 2));
+            painter.setBrush(QBrush(QColor(0, 128, 255, 50)));
+            painter.drawEllipse(QRectF(
                 tank->position().x() - 3, tank->position().y() - 3,
-                size + 6, size + 6,
-                QPen(QColor(0, 180, 255, 200), 2),
-                QBrush(QColor(0, 128, 255, 50))
-            );
-            m_dynamicItems.append(shieldItem);
+                size + 6, size + 6));
         }
 
-        // Boss 特殊标记
+        // Boss 标记
         if (tank->type() == TankType::EnemyBoss) {
-            auto* bossText = addSimpleText("BOSS", QFont("Arial", 9, QFont::Bold));
-            bossText->setPos(tank->position().x() + 2, tank->position().y() - 18);
-            bossText->setBrush(QColor(255, 50, 50));
-            m_dynamicItems.append(bossText);
+            painter.setPen(QColor(255, 50, 50));
+            painter.setFont(QFont("Arial", 9, QFont::Bold));
+            painter.drawText(
+                QPointF(tank->position().x() + 2, tank->position().y() - 18),
+                "BOSS");
         }
     }
+}
 
-    // ===== 4. 子弹 =====
-    for (const auto& bullet : m_engine->bullets()) {
+void GameScene::drawBullets(QPainter& painter, GameEngine* engine) {
+    painter.setPen(Qt::NoPen);
+
+    for (const auto& bullet : engine->bullets()) {
         if (!bullet->isActive()) continue;
 
         QColor bulletColor = bullet->isPlayerBullet()
             ? QColor(255, 255, 100)   // 玩家：黄色
             : QColor(255, 100, 100);   // 敌方：红色
 
-        auto* bulletItem = addEllipse(
-            bullet->position().x(), bullet->position().y(),
-            bullet->size().width(), bullet->size().height(),
-            QPen(Qt::NoPen),
-            QBrush(bulletColor)
-        );
-        m_dynamicItems.append(bulletItem);
+        painter.setBrush(QBrush(bulletColor));
+        painter.drawEllipse(QRectF(bullet->position(), bullet->size()));
     }
-
-    // ===== 5. 基地 =====
-    auto drawBase = [this](Base* base) {
-        if (!base || base->isDestroyed()) return;
-        auto* baseRect = addRect(
-            base->position().x(), base->position().y(),
-            base->size().width(), base->size().height(),
-            QPen(Qt::yellow, 2),
-            QBrush(QColor(50, 50, 50))
-        );
-        m_dynamicItems.append(baseRect);
-
-        auto* hqText = addSimpleText("HQ", QFont("Arial", 12, QFont::Bold));
-        hqText->setPos(base->position().x() + 6, base->position().y() + 8);
-        hqText->setBrush(Qt::yellow);
-        m_dynamicItems.append(hqText);
-    };
-    drawBase(m_engine->base());
-    drawBase(m_engine->base2());
 }
 
-void GameScene::clearAllItems() {
-    QList<QGraphicsItem*> allItems = items();
-    for (auto* item : allItems) {
-        removeItem(item);
-        delete item;
-    }
-    m_dynamicItems.clear();
+void GameScene::drawBases(QPainter& painter, GameEngine* engine) {
+    auto drawBase = [&](Base* base) {
+        if (!base || base->isDestroyed()) return;
+
+        painter.setPen(QPen(Qt::yellow, 2));
+        painter.setBrush(QBrush(QColor(50, 50, 50)));
+        painter.drawRect(QRectF(base->position(), base->size()));
+
+        painter.setPen(Qt::yellow);
+        painter.setFont(QFont("Arial", 12, QFont::Bold));
+        painter.drawText(QRectF(base->position(), base->size()),
+                         Qt::AlignCenter, "HQ");
+    };
+    drawBase(engine->base());
+    drawBase(engine->base2());
 }
 
 QColor GameScene::colorForTank(int ownerIndex) const {

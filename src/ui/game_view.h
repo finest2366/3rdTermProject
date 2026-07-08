@@ -1,11 +1,13 @@
 /**
  * @file game_view.h
- * @brief 游戏视图 —— QGraphicsView 子类，60FPS 游戏循环 + 键盘输入
+ * @brief 游戏视图 —— QWidget 子类，60FPS 游戏循环 + QPainter 渲染 + 键盘输入
+ *
+ * v2.1：从 QGraphicsView 重构为 QWidget + QPainter 直接渲染
  */
 
 #pragma once
 
-#include <QGraphicsView>
+#include <QWidget>
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QSet>
@@ -15,7 +17,7 @@ class GameEngine;
 class GameScene;
 class HUD;
 
-class GameView : public QGraphicsView {
+class GameView : public QWidget {
     Q_OBJECT
 public:
     explicit GameView(QWidget* parent = nullptr);
@@ -35,6 +37,7 @@ signals:
     void backToMenuRequested();
 
 protected:
+    void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
 
@@ -50,7 +53,7 @@ private:
     GameScene* m_scene = nullptr;
     HUD* m_hud = nullptr;
     QTimer* m_timer = nullptr;
-    QElapsedTimer m_frameTimer;
+    QElapsedTimer m_lastFrameTimer;
 
     bool m_paused = false;
     QSet<int> m_pressedKeys;

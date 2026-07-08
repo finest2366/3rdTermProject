@@ -23,6 +23,8 @@ Tank::Tank(TankType type, const QString& name, const QPointF& pos, Direction dir
     m_fireTimer.start();
 }
 
+Tank::~Tank() = default;
+
 void Tank::move(Direction dir) {
     if (m_isFrozen) return;  // 冰冻状态无法移动
     m_direction = dir;

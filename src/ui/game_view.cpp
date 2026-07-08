@@ -1,6 +1,6 @@
 /**
  * @file game_view.cpp
- * @brief 游戏视图实现 —— 主游戏循环、输入处理、渲染协调
+ * @brief 游戏视图实现 —— 主游戏循环、QPainter 渲染、输入处理
  */
 
 #include "game_view.h"
@@ -11,11 +11,12 @@
 #include "../core/player_tank.h"
 
 #include <QKeyEvent>
+#include <QPainter>
 #include <QDebug>
 #include <QVBoxLayout>
 
 GameView::GameView(QWidget* parent)
-    : QGraphicsView(parent)
+    : QWidget(parent)
 {
     setupView();
 
@@ -23,14 +24,13 @@ GameView::GameView(QWidget* parent)
 
     // HUD 叠加层
     m_hud = new HUD(this);
-    m_hud->attachToEngine(m_engine.get());
 
     connectSignals();
 
     // 60 FPS 定时器
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &GameView::gameLoop);
-    m_frameTimer.start();
+    m_lastFrameTimer.start();
 }
 
 GameView::~GameView() {
@@ -39,17 +39,16 @@ GameView::~GameView() {
 
 void GameView::setupView() {
     m_scene = new GameScene(this);
-    setScene(m_scene);
 
     int sceneW = GameConfig::MAP_COLS * GameConfig::CELL_SIZE;
     int sceneH = GameConfig::MAP_ROWS * GameConfig::CELL_SIZE;
-    m_scene->setSceneRect(0, 0, sceneW, sceneH);
 
     setFixedSize(sceneW + 4, sceneH + 4);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setRenderHint(QPainter::Antialiasing);
-    setBackgroundBrush(Qt::black);
+    setAutoFillBackground(true);
+
+    QPalette pal = palette();
+    pal.setColor(QPalette::Window, QColor(20, 20, 30));  // 深蓝灰背景
+    setPalette(pal);
 }
 
 void GameView::connectSignals() {
@@ -61,8 +60,8 @@ void GameView::startSingleGame(int levelId) {
     m_paused = false;
     m_timer->start(GameConfig::FRAME_MS);
     m_scene->setEngine(m_engine.get());
-    m_scene->syncWithEngine();
     m_hud->refresh();
+    m_lastFrameTimer.restart();
     setFocus();
     qDebug() << "GameView: single game started, level" << levelId;
 }
@@ -72,8 +71,8 @@ void GameView::startMultiGame() {
     m_paused = false;
     m_timer->start(GameConfig::FRAME_MS);
     m_scene->setEngine(m_engine.get());
-    m_scene->syncWithEngine();
     m_hud->refresh();
+    m_lastFrameTimer.restart();
     setFocus();
     qDebug() << "GameView: multi game started";
 }
@@ -84,14 +83,28 @@ void GameView::setPaused(bool paused) {
         m_timer->stop();
     } else {
         m_timer->start(GameConfig::FRAME_MS);
-        m_frameTimer.restart();
+        m_lastFrameTimer.restart();
+    }
+}
+
+void GameView::paintEvent(QPaintEvent* event) {
+    Q_UNUSED(event);
+    QPainter painter(this);
+    // 像素游戏不需要抗锯齿，关闭可提升性能
+    painter.setRenderHint(QPainter::Antialiasing, false);
+
+    if (m_engine) {
+        m_scene->render(painter, m_engine.get());
     }
 }
 
 void GameView::gameLoop() {
     if (m_paused) return;
 
-    m_frameTimer.restart();
+    // 使用实际帧时间（而非硬编码 16ms）
+    qint64 elapsed = m_lastFrameTimer.restart();
+    if (elapsed > 200) elapsed = 16;  // 防止死亡螺旋（超过200ms按正常帧处理）
+    int frameDelta = static_cast<int>(elapsed);
 
     // 处理持续按下的按键
     for (int playerIdx = 0; playerIdx < 2; ++playerIdx) {
@@ -119,13 +132,10 @@ void GameView::gameLoop() {
         }
     }
 
-    m_engine->update();
+    m_engine->update(frameDelta);
 
-    // 脏标记优化：仅在状态变化时重建图形
-    if (m_engine->isDirty()) {
-        m_scene->syncWithEngine();
-        m_engine->clearDirty();
-    }
+    // QPainter 渲染成本极低，每帧直接重绘
+    update();
 
     m_hud->refresh();
 }
@@ -149,12 +159,12 @@ void GameView::keyPressEvent(QKeyEvent* event) {
         m_engine->activateSkill(1);
     }
 
-    QGraphicsView::keyPressEvent(event);
+    QWidget::keyPressEvent(event);
 }
 
 void GameView::keyReleaseEvent(QKeyEvent* event) {
     m_pressedKeys.remove(event->key());
-    QGraphicsView::keyReleaseEvent(event);
+    QWidget::keyReleaseEvent(event);
 }
 
 void GameView::onGameOver(int winner) {

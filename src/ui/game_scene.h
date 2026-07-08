@@ -1,23 +1,21 @@
 /**
  * @file game_scene.h
- * @brief 游戏场景 —— QGraphicsScene 子类，将引擎实体同步为图形项
+ * @brief 游戏场景渲染器 —— 使用 QPainter 直接绘制，零分配开销
  *
- * v2.0 改进：
- * - 水域 (Water) 渲染
- * - 冰冻/隐身特效
- * - Boss 坦克更大尺寸和特殊颜色
- * - 道具名称缩写标签
+ * v2.1 改进：
+ * - 从 QGraphicsScene 重构为纯 QPainter 渲染
+ * - 每帧零堆分配，消除 QGraphicsItem 创建/销毁开销
  */
 
 #pragma once
 
-#include <QGraphicsScene>
-#include <QVector>
+#include <QObject>
+#include <QColor>
 
+class QPainter;
 class GameEngine;
-class QGraphicsItem;
 
-class GameScene : public QGraphicsScene {
+class GameScene : public QObject {
     Q_OBJECT
 public:
     explicit GameScene(QObject* parent = nullptr);
@@ -25,14 +23,18 @@ public:
 
     void setEngine(GameEngine* engine) { m_engine = engine; }
 
-    /** @brief 每帧由 GameView::gameLoop() 调用 */
-    void syncWithEngine();
+    /** @brief 使用 QPainter 直接渲染所有游戏实体 */
+    void render(QPainter& painter, GameEngine* engine);
 
 private:
-    void clearAllItems();
+    void drawWalls(QPainter& painter, GameEngine* engine);
+    void drawPowerUps(QPainter& painter, GameEngine* engine);
+    void drawTanks(QPainter& painter, GameEngine* engine);
+    void drawBullets(QPainter& painter, GameEngine* engine);
+    void drawBases(QPainter& painter, GameEngine* engine);
+
     QColor colorForTank(int ownerIndex) const;
     QColor colorForPowerUp(int typeInt) const;
 
     GameEngine* m_engine = nullptr;
-    QVector<QGraphicsItem*> m_dynamicItems;
 };
