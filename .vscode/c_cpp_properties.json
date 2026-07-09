@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "MSYS2 UCRT64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:MSYS2_UCRT64_ROOT}/include",
+                "${env:MSYS2_UCRT64_ROOT}/include/qt6",
+                "${env:MSYS2_UCRT64_ROOT}/include/qt6/QtCore",
+                "${env:MSYS2_UCRT64_ROOT}/include/qt6/QtGui",
+                "${env:MSYS2_UCRT64_ROOT}/include/qt6/QtWidgets",
+                "${workspaceFolder}/vcpkg_installed/x64-mingw-dynamic/include"
+            ],
+            "defines": [],
+            "compilerPath": "${env:MSYS2_UCRT64_ROOT}/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}

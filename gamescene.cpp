@@ -244,14 +244,14 @@ void GameScene::gameLoop()
             m_manager->player2Scored();
             emit scoreChanged(m_manager->player1Score(), m_manager->player2Score());
             if (!m_manager->isPvPOver()) {
-                m_player1->respawn(SCENE_WIDTH / 4, SCENE_HEIGHT - TILE_SIZE);
+                m_player1->respawn(SCENE_WIDTH / 4, SCENE_HEIGHT - TILE_SIZE * 1.5);
             }
         }
         if (m_player2 && !m_player2->isAlive()) {
             m_manager->player1Scored();
             emit scoreChanged(m_manager->player1Score(), m_manager->player2Score());
             if (!m_manager->isPvPOver()) {
-                m_player2->respawn(SCENE_WIDTH * 3 / 4, SCENE_HEIGHT - TILE_SIZE);
+                m_player2->respawn(SCENE_WIDTH * 3 / 4, SCENE_HEIGHT - TILE_SIZE * 1.5);
             }
         }
     }
@@ -311,13 +311,25 @@ void GameScene::spawnPlayer2()
 
 void GameScene::spawnEnemies(int count, EnemyTank::Difficulty diff)
 {
-    // 在顶部区域随机生成敌人
-    int spawnRows[] = {0, 1, 2};
-    int spawnCols[] = {0, 4, 8, 12, 16};
-
+    // 在顶部区域随机生成敌人，避开边界墙和已有墙壁
     for (int i = 0; i < count; i++) {
-        int row = spawnRows[i % 3];
-        int col = spawnCols[i % 5];
+        int col, row;
+        bool validPosition = false;
+        int attempts = 0;
+
+        do {
+            // 避开边界墙：row 1~2（顶部区域），col 1~MAP_COLS-2
+            col = 1 + rand() % (MAP_COLS - 2);
+            row = 1 + rand() % 2;   // 仅顶部2行
+            attempts++;
+
+            // 检查该位置是否已有墙壁
+            Wall* w = wallAt(row, col);
+            if (!w || !w->blocksTank()) {
+                validPosition = true;
+            }
+        } while (!validPosition && attempts < 50);
+
         qreal x = col * TILE_SIZE + TILE_SIZE / 2.0;
         qreal y = row * TILE_SIZE + TILE_SIZE / 2.0;
 

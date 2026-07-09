@@ -1,0 +1,8 @@
+{
+  "name": "tankbattle",
+  "version": "1.0.0",
+  "description": "Tank Battle game (坦克大战)",
+  "dependencies": [
+    "qtbase"
+  ]
+}

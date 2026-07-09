@@ -1,0 +1,6 @@
+{
+  "name": "qtbase",
+  "version": "6.11.1",
+  "description": "QtBase (Core, Gui, Widgets) from MSYS2 system installation. Wraps the pre-built MinGW Qt6 for use with vcpkg manifest mode.",
+  "supports": "mingw"
+}

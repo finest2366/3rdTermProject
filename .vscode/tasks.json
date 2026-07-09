@@ -1,0 +1,54 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "CMake Configure (vcpkg)",
+            "command": "cmake",
+            "args": [
+                "-B",
+                "build",
+                "-G",
+                "MinGW Makefiles",
+                "-DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "-DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_CXX_COMPILER=${env:MSYS2_UCRT64_ROOT}/bin/g++.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "${env:MSYS2_UCRT64_ROOT}/bin;${env:MSYS2_UCRT64_ROOT}/../usr/bin;${env:PATH}"
+                }
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "detail": "CMake configure with vcpkg manifest mode"
+        },
+        {
+            "type": "cppbuild",
+            "label": "CMake Build",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/build",
+                "--config",
+                "Debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "${env:MSYS2_UCRT64_ROOT}/bin;${env:MSYS2_UCRT64_ROOT}/../usr/bin;${env:PATH}"
+                }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "CMake build (Debug)"
+        }
+    ]
+}

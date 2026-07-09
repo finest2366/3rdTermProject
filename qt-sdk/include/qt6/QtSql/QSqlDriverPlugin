@@ -1,1 +1,0 @@
-#include <QtSql/qsqldriverplugin.h> // IWYU pragma: export

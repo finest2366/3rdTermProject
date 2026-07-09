@@ -1,0 +1,11 @@
+{
+    "makefile.configureOnOpen": false,
+    "cmake.configureOnOpen": true,
+    "cmake.generator": "MinGW Makefiles",
+    "cmake.toolchainFile": "${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureSettings": {
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",
+        "CMAKE_CXX_COMPILER": "${env:MSYS2_UCRT64_ROOT}/bin/g++.exe"
+    }
+}
